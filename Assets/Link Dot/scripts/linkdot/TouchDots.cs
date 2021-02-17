@@ -422,10 +422,13 @@ namespace Hitcode_linkDots {
 				GameData.instance.isHolding = false;
 				GameData.instance.isWin = true;
                 GameObject reciever = GameObject.Find("all_game");
-                if (reciever != null) {
+                if (reciever != null)
+                {
                     reciever.transform.parent.GetComponent<MainScript>().gameWin();
                     print("game win!!");
                 }
+
+
                 else
                 {
                     GameObject[] allgameObject = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();

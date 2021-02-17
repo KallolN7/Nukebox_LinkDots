@@ -122,13 +122,13 @@ namespace Hitcode_linkDots
 
 
 
-        Hitcode_linkDots.JSONNode levelData;
+        JSONNode levelData;
 
         public void init()
         {
 
             string tData = Datas.CreateInstance<Datas>().getData("linkdots")[GameData.instance.cLevel];//level
-            levelData = Hitcode_linkDots.JSONArray.Parse(tData);
+            levelData = JSONArray.Parse(tData);
 
 
 

@@ -221,7 +221,7 @@ namespace Hitcode_linkDots
         }
 
         public GameObject levelButton;//the level button template instance
-        public GameObject dot;//the page dot for turn page
+        //public GameObject dot;//the page dot for turn page
 
         int page = 0;//current page
         int pages = 1;//how many page
@@ -404,12 +404,12 @@ namespace Hitcode_linkDots
         /// <param name="tbtn">Tbtn.</param>
         void clickLevel(GameObject tbtn)
         {
-          
             if (GameData.instance.isLock) return;
 
            
             GameManager.getInstance().playSfx("click");
             int cText = int.Parse(tbtn.GetComponentInChildren<Text>().text) - 1;
+            Debug.Log("LevelMenu, clickLevel, Level = " + cText);
             if (enableLock)
             {
                 if (cText >= GameData.instance.levelPass[GameData.difficulty] + 1) return;//locked level

@@ -51,7 +51,7 @@ namespace Hitcode_linkDots
             }
             else
             {
-                init();//for test
+               init();//for test
             }
 
 

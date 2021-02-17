@@ -4986,7 +4986,7 @@ MonoBehaviour:
   dot: {fileID: 0}
   perpage: 25
   mask: {fileID: 27970013}
-  enableLock: 1
+  enableLock: 0
 --- !u!1 &2032854380
 GameObject:
   m_ObjectHideFlags: 0
