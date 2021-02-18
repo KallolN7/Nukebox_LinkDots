@@ -159,9 +159,9 @@ namespace nukebox
         /// </summary>
         /// <param name="dataName"></param>
         /// <returns></returns>
-        public string[] getData(string dataName)
+        public string[] getData()
         {
-            datas = Resources.Load<TextAsset>(dataName + "/" + difficulty);
+            datas = Resources.Load<TextAsset>("" + difficulty);
             string[] lines = new string[0];
             data = new Dictionary<string, Dictionary<string, string>>();
             Dictionary<string, string> loc = new Dictionary<string, string>();
@@ -177,7 +177,7 @@ namespace nukebox
         public void ParseData()
         {
             currentLevel = PlayerPrefs.GetInt("levelPassed" + difficulty, 0);
-            string tData = getData("linkdots")[currentLevel];//level
+            string tData = getData()[currentLevel];//level
             levelData = JSONArray.Parse(tData);
 
             rowCount = int.Parse(levelData["r"]);
