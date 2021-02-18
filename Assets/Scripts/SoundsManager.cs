@@ -31,17 +31,14 @@ namespace nukebox
             AudioClip clip;
             switch (soundType)
             {
-                case SoundType.sfx_GAmeStart:
-                    clip = soundsHolder.GetSfxClip(1);
+                case SoundType.Sfx_GameStart:
+                    clip = soundsHolder.GetSfxClip(0);
                     break;
                 case SoundType.Sfx_GameOver:
                     clip = soundsHolder.GetSfxClip(2);
                     break;
-                case SoundType.Sfx_FoodConsume:
-                    clip = soundsHolder.GetSfxClip(0);
-                    break;
-                case SoundType.Sfx_TileConsume:
-                    clip = soundsHolder.GetSfxClip(4);
+                case SoundType.sfx_Addpath:
+                    clip = soundsHolder.GetSfxClip(1);
                     break;
                 default:
                     clip = soundsHolder.GetSfxClip((int)soundType);
@@ -61,17 +58,16 @@ namespace nukebox
         }
 
 
-        #region EventsHandler
+        #region Events
 
         /// <summary>
         /// Subsribing methods to events
         /// </summary>
         private void OnEnable()
         {
-            //EventManager.AddListener(EventID.Event_OnGameStart, EventOnGameStart);
-            //EventManager.AddListener(EventID.Event_OnGameOver, EventOnGameOver);
-            //EventManager.AddListener(EventID.Event_OnFoodConsumed, EventOnFoodConsumed);
-            //EventManager.AddListener(EventID.Event_OnTileConsumed, EventOnTileConsumed);
+            EventManager.AddListener(EventID.Event_GameStart, EventOnGameStart);
+            EventManager.AddListener(EventID.Event_GameOver, EventOnGameOver);
+            EventManager.AddListener(EventID.Event_AddPath, EventOnAddPath);
         }
 
         /// <summary>
@@ -79,10 +75,9 @@ namespace nukebox
         /// </summary>
         private void OnDisable()
         {
-            //EventManager.RemoveListener(EventID.Event_OnGameStart, EventOnGameStart);
-            //EventManager.RemoveListener(EventID.Event_OnGameOver, EventOnGameOver);
-            //EventManager.RemoveListener(EventID.Event_OnFoodConsumed, EventOnFoodConsumed);
-            //EventManager.RemoveListener(EventID.Event_OnTileConsumed, EventOnTileConsumed);
+            EventManager.RemoveListener(EventID.Event_GameStart, EventOnGameStart);
+            EventManager.RemoveListener(EventID.Event_GameOver, EventOnGameOver);
+            EventManager.RemoveListener(EventID.Event_AddPath, EventOnAddPath);
         }
 
         /// <summary>
@@ -91,11 +86,11 @@ namespace nukebox
         /// <param name="obj"></param>
         private void EventOnGameStart(object obj)
         {
-            PlaySfxSound(SoundType.sfx_GAmeStart);
+            PlaySfxSound(SoundType.Sfx_GameStart);
         }
 
         /// <summary>
-        /// Methos subsribed to Event_OnGameOver event
+        ///  Methos subsribed to Event_GameOver event
         /// </summary>
         /// <param name="obj"></param>
         private void EventOnGameOver(object obj)
@@ -104,38 +99,24 @@ namespace nukebox
         }
 
         /// <summary>
-        /// Methos subsribed to Event_FoodTimerUp event
+        ///  Methos subsribed to Event_AddPath event
         /// </summary>
         /// <param name="obj"></param>
-        private void EventOnFoodConsumed(object obj)
+        private void EventOnAddPath(object obj)
         {
-            PlaySfxSound(SoundType.Sfx_FoodConsume);
-        }
-
-        /// <summary>
-        /// Methos subsribed to Event_OnTileConsumed event
-        /// </summary>
-        /// <param name="obj"></param>
-        private void EventOnTileConsumed(object obj)
-        {
-            PlaySfxSound(SoundType.Sfx_TileConsume); 
+            PlaySfxSound(SoundType.sfx_Addpath);
         }
 
         #endregion
     }
 
 
-
-
-
     public enum SoundType
     {
         Background_Music,
-        Sfx_FoodConsume,
-        sfx_GAmeStart,
-        Sfx_GameOver,
-        Sfx_TileConsume,
-        Sfx_BoundaryHit
+        Sfx_GameStart,
+        sfx_Addpath,
+        Sfx_GameOver
     }
 }
 

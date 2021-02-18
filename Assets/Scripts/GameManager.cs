@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
+using System.IO;
+using System; 
 
 namespace nukebox
 {
@@ -154,18 +153,18 @@ namespace nukebox
 
         #region GameData
 
+
         /// <summary>
-        /// loading File from Resources folder and storing them in dictionary
+        /// loading File from StreamingAssets folder and returning jsonOnject 
         /// </summary>
         /// <param name="dataName"></param>
         /// <returns></returns>
-        public string[] getData()
+        private string[] GetData()
         {
-            datas = Resources.Load<TextAsset>("" + difficulty);
+            string path = Application.streamingAssetsPath + "/LevelData.json";
             string[] lines = new string[0];
-            data = new Dictionary<string, Dictionary<string, string>>();
-            Dictionary<string, string> loc = new Dictionary<string, string>();
-            lines = datas.text.Split('\n');
+            string jsonString = File.ReadAllText(path);
+            lines = jsonString.Split('\n');
 
             return lines;
         }
@@ -177,17 +176,29 @@ namespace nukebox
         public void ParseData()
         {
             currentLevel = PlayerPrefs.GetInt("levelPassed" + difficulty, 0);
-            string tData = getData()[currentLevel];//level
-            levelData = JSONArray.Parse(tData);
+            string jsonString = GetData()[currentLevel];
+             levelData = JSONArray.Parse(jsonString);
 
-            rowCount = int.Parse(levelData["r"]);
 
-            colors = new Color[] { Color.clear, Color.red, Color.blue, Color.green, new Color(255f / 255f, 167f / 255f, 11f / 255f), Color.magenta }; //,Color.cyan, Color.yellow, Color.gray, Color.white, Color.black, new Color(252f / 255f, 157f / 255f, 154f / 255f), new Color(249f / 255f, 205f / 255f, 173f / 255f), new Color(200f / 255f, 200f / 255f, 169f / 255f) };
+            if (levelData == null)
+            {
+                Debug.LogError("GameManager, ParseData, levelData is null");
+                return;
+            }
+            else
+            {
+                Debug.Log("GameManager, ParseData" + levelData.ToString());
+            }
+
+            string rowString = levelData["r"];
+            rowCount = Convert.ToInt32(rowString);
+
+            colors = new Color[] { Color.clear, Color.red, Color.blue, Color.green, new Color(255f / 255f, 167f / 255f, 11f / 255f), Color.magenta}; 
 
             ColorData = new int[rowCount * rowCount];
             DotColorData = new int[rowCount * rowCount];
 
-            dotPoses = levelData["l"];//this is actually is pathes between 2 dots
+            dotPoses = levelData["l"];
 
             paths = new List<List<int>>();
             List<int> tpath0 = new List<int>();
@@ -214,7 +225,7 @@ namespace nukebox
 
             Config.SetData(rowCount, currentLevel, bestScore, levelStates, paths, dotPoses, ColorData, DotColorData, colors, linkedLines, winLinkCount);
 
-            Debug.Log("GameManager, ParseData, current Level = " + currentLevel);
+            Debug.Log("GameManager, ParseData, current Level = " + currentLevel + " | rowCount= " + rowCount);
         }
 
 

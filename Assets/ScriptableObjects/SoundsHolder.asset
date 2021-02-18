@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2d8d3737a978ba4ea95f91257ff6b0b, type: 3}
   m_Name: SoundsHolder
   m_EditorClassIdentifier: 
-  BgMusic: {fileID: 0}
-  sfxSounds: []
+  BgMusic: {fileID: 8300000, guid: 90eae78e8ce85a849b5b0ca11b2de641, type: 3}
+  sfxSounds:
+  - {fileID: 8300000, guid: 78dd656630a25ef49a9494dc0c0a8adc, type: 3}
+  - {fileID: 8300000, guid: 462955f228702ce47abf8162182ec7e9, type: 3}
+  - {fileID: 8300000, guid: 966672a23f6266a4aa846cffe5609c08, type: 3}

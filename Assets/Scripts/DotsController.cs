@@ -334,7 +334,7 @@ namespace nukebox
 		{
 
 			Debug.Log("DotsController, AddPath");
-			EventManager.TriggerEvent(EventID.Event_AddPath);
+			EventManager.TriggerEvent(EventID.Event_AddPath); //Triggering AddPath Event
 
 			Config.paths[colorId].Add(placeId);
 			int tlen = Config.paths[colorId].Count;
