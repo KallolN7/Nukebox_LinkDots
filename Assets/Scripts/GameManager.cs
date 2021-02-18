@@ -182,7 +182,8 @@ namespace nukebox
 
             rowCount = int.Parse(levelData["r"]);
 
-            colors = new Color[] { Color.clear, Color.red, Color.blue, Color.magenta, Color.cyan, Color.green, Color.yellow, Color.gray, Color.white, Color.black, new Color(252f / 255f, 157f / 255f, 154f / 255f), new Color(249f / 255f, 205f / 255f, 173f / 255f), new Color(200f / 255f, 200f / 255f, 169f / 255f) };
+            colors = new Color[] { Color.clear, Color.red, Color.blue, Color.green, new Color(255f / 255f, 167f / 255f, 11f / 255f), Color.magenta }; //,Color.cyan, Color.yellow, Color.gray, Color.white, Color.black, new Color(252f / 255f, 157f / 255f, 154f / 255f), new Color(249f / 255f, 205f / 255f, 173f / 255f), new Color(200f / 255f, 200f / 255f, 169f / 255f) };
+
             ColorData = new int[rowCount * rowCount];
             DotColorData = new int[rowCount * rowCount];
 

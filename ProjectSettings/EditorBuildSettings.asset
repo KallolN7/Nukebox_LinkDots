@@ -15,6 +15,6 @@ EditorBuildSettings:
     path: Assets/Link Dot/GameLevel/LevelMenu.unity
     guid: f9e0d0d813fd32c4292520f1b4c18e66
   - enabled: 1
-    path: Assets/Link Dot/GameLevel/Game.unity
+    path: Assets/_Scenes/Game.unity
     guid: 6f34ab5918425534d986a2a17601bf4d
   m_configObjects: {}
