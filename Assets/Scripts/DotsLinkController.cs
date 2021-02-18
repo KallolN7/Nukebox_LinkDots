@@ -6,11 +6,16 @@ using Hitcode_linkDots;
 
 namespace nukebox
 {
+    /// <summary>
+    /// Spawns dots based on level data
+    /// </summary>
     public class DotsLinkController : MonoBehaviour
     {
 
         [SerializeField]
         private DotsController dotsPrefab;
+        [SerializeField]
+        private DotsChildController dotsChildPrefab;
         [SerializeField]
         private SpriteRenderer linkPrefab;
         [SerializeField]
@@ -21,16 +26,25 @@ namespace nukebox
         List<DotsController> dotsList = new List<DotsController>();
         List<SpriteRenderer> linksList = new List<SpriteRenderer>();
 
-        public void PrePareDots()
+
+        #region Private Methods
+
+        /// <summary>
+        /// Resets dots and links and spawns new dosts and links based on level data 
+        /// </summary>
+        private void PrePareDots()
         {
             ResetDots();
-            PopulateDots();
-            SetColorToDotsAndLinks();
+            PopulateInvisibleDotsAndLinks();
+            PopulateVisibleDotsAndLinks();
         }
 
-       private void ResetDots()
+        /// <summary>
+        /// Resets all dots and links
+        /// </summary>
+        private void ResetDots()
         {
-            if(dotsList.Count >= 1)
+            if (dotsList.Count >= 1)
             {
                 for (int i = 0; i < dotsList.Count; i++)
                 {
@@ -38,7 +52,7 @@ namespace nukebox
                 }
             }
 
-            if(linksList.Count >= 1)
+            if (linksList.Count >= 1)
             {
                 for (int i = 0; i < linksList.Count; i++)
                 {
@@ -50,26 +64,21 @@ namespace nukebox
             dotsList.Clear();
         }
 
-        private void PopulateDots()
+        /// <summary>
+        /// Populates new invisible dots and links throughout the grid
+        /// </summary>
+        private void PopulateInvisibleDotsAndLinks()
         {
-           // GameObject tBg = Resources.Load("linkdots/square") as GameObject;
-
             float gridW = dotsBox.sprite.bounds.size.x / Config.rowCount;
-
-            //GameObject tCircle = Resources.Load("linkdots/dot") as GameObject;
-            //GameObject tLink = Resources.Load("linkdots/link") as GameObject;
-
-
             float offsetx = -1 * gridW * Config.rowCount / 2 + gridW / 2;
             float offsety = offsetx;
 
-           // List<GameObject> tbgs = new List<GameObject>();
 
             for (int i = 0; i < Config.rowCount * Config.rowCount; i++)
             {
                 int tx = Mathf.FloorToInt(i % Config.rowCount);
                 int ty = Mathf.FloorToInt(i / Config.rowCount);
-                DotsController dot = Instantiate(dotsPrefab, dotsHolderTransform);
+                DotsController dot = Instantiate(dotsPrefab, dotsHolderTransform);  //Spawning each invisible and interactive dots 
                 float tscale = gridW / dot.GetSpriteRenderer().bounds.size.x;
                 dot.transform.localScale *= tscale;
                 dot.transform.localPosition = new Vector2(dotsHolderTransform.localPosition.x + gridW * tx + offsetx, dotsHolderTransform.localPosition.y + gridW * ty + offsety);
@@ -77,22 +86,17 @@ namespace nukebox
                 dot.name = "bg" + tx + "_" + ty;
                 dot.GetSpriteRenderer().color = Color.clear;
                 dotsList.Add(dot);
+                Config.dotsDict.Add(dot.name, dot);
+                dot.SetData(tx, ty); //Setting data to each dot
 
-
-
-                //dot.gameObject.AddComponent<BoxCollider>();
-                //dot.gameObject.AddComponent<DotsController>();
-
-                dot.SetData(tx, ty);
-
-               Config.ColorData[i] = 0;//no color
-                Config.DotColorData[i] = 0;//no color
+                Config.ColorData[i] = 0;
+                Config.DotColorData[i] = 0;
 
 
                 int[] rotation = new int[] { 0, 90, 180, 270 };
-                for (int j = 0; j < 4; j++)
-                {//add 4 link lines to each square
-                    SpriteRenderer link = Instantiate(linkPrefab, dotsHolderTransform);
+                for (int j = 0; j < Config.linksPerDot; j++)
+                {
+                    SpriteRenderer link = Instantiate(linkPrefab, dotsHolderTransform); //Spawning each links per dots
 
                     link.transform.localPosition = dot.transform.localPosition;
                     link.transform.localScale = dot.transform.localScale;
@@ -100,27 +104,42 @@ namespace nukebox
                     link.color = Color.clear;
                     link.sortingOrder = 2;
                     linksList.Add(link);
+                    switch (j)
+                    {
+                        case 0://right
+                            Config.linDict.Add("linkr" + tx + "_" + ty, link);
+                            break;
+                        case 1://up
+                            Config.linDict.Add("linku" + tx + "_" + ty, link);
+                            break;
+                        case 2://left
+                            Config.linDict.Add("linkl" + tx + "_" + ty, link);
+                            break;
+                        case 3://down
+                            Config.linDict.Add("linkd" + tx + "_" + ty, link);
+                            break;
+                    }
                 }
             }
         }
 
-
-        private void SetColorToDotsAndLinks()
+        /// <summary>
+        /// Populates all visible dots based on level data
+        /// </summary>
+        private void PopulateVisibleDotsAndLinks()
         {
 
             int colorIndex = 1;//because 0 is no color
 
-            for (int i = 0; i < Config.dotPoses.Count; i++) 
+            for (int i = 0; i < Config.dotPoses.Count; i++)
             {
-
-
                 string[] pos = new string[2];
                 pos[0] = Config.dotPoses[i]["v"][0]["x"];
                 pos[1] = Config.dotPoses[i]["v"][0]["y"];
 
-                if (pos[0] == null || pos[0] == "") 
+                if (pos[0] == null || pos[0] == "")
                     pos[0] = "0";
-                if (pos[1] == null || pos[1] == "") 
+                if (pos[1] == null || pos[1] == "")
                     pos[1] = "0";
 
                 int tx = int.Parse(pos[0]);
@@ -128,10 +147,10 @@ namespace nukebox
 
                 int tindex = ty * Config.rowCount + tx;
 
-                DotsController dot = Instantiate(dotsPrefab, dotsList[tindex].transform);
+                DotsChildController dot = Instantiate(dotsChildPrefab, dotsList[tindex].transform); //Spawning each visible  dots 
 
                 dot.GetSpriteRenderer().sortingOrder = 3;
-                dot.GetSpriteRenderer().color =Config.colors[i + 1];
+                dot.GetSpriteRenderer().color = Config.colors[i + 1];
                 dot.name = "dot";
 
                 Config.DotColorData[tindex] = i + 1;
@@ -147,15 +166,13 @@ namespace nukebox
                 ty = int.Parse(pos[1]);
 
                 tindex = ty * Config.rowCount + tx;
-                dot = Instantiate(dotsPrefab, dotsList[tindex].transform);
 
-
+                dot = Instantiate(dotsChildPrefab, dotsList[tindex].transform); //Spawning each visible  dots 
                 dot.GetSpriteRenderer().sortingOrder = 3;
                 dot.GetSpriteRenderer().color = Config.colors[i + 1];
-
                 dot.name = "dot";
 
-               // AnimateDots(dot, colorIndex);
+                // AnimateDots(dot, colorIndex);
 
                 Config.DotColorData[tindex] = i + 1;
             }
@@ -171,16 +188,35 @@ namespace nukebox
             dot.transform.DOScale(tcScale, 1).SetDelay(tdelay).SetEase(Ease.OutBounce);
         }
 
-        public void clear()
+        #endregion
+
+
+        #region Events
+
+        /// <summary>
+        /// Subsribing methods to events
+        /// </summary>
+        private void OnEnable()
         {
-            if (dotsHolderTransform != null)
-            {
-                foreach (Transform tobj in dotsHolderTransform)
-                {
-                    tobj.DOScale(Vector3.zero, .2f);
-                }
-            }
+            EventManager.AddListener(EventID.Event_GameStart, EventOnGameStart);
         }
+
+        /// <summary>
+        /// Un-subsribing methods from events
+        /// </summary>
+        private void OnDisable()
+        {
+            EventManager.RemoveListener(EventID.Event_GameStart, EventOnGameStart);
+        }
+
+        private void EventOnGameStart(object obj)
+        {
+            Debug.Log("DotsLinkController, EventOnGameStart");
+            PrePareDots();
+        }
+
+        #endregion
+
     }
 }
 

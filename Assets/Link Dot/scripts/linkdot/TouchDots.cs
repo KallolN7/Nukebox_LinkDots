@@ -421,10 +421,10 @@ namespace Hitcode_linkDots {
 			if(nwin >= GameData.instance.winLinkCount){//enough linkage
 				GameData.instance.isHolding = false;
 				GameData.instance.isWin = true;
-                GameObject reciever = GameObject.Find("all_game");
+                GameObject reciever = GameObject.Find("linkdot");
                 if (reciever != null)
                 {
-                    reciever.transform.parent.GetComponent<MainScript>().gameWin();
+                    reciever.GetComponent<MainScript>().gameWin();
                     print("game win!!");
                 }
 

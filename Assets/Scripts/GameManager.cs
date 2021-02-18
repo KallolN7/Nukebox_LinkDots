@@ -7,39 +7,19 @@ using UnityEngine.SceneManagement;
 
 namespace nukebox
 {
+    /// <summary>
+    /// Controls all game related functionalities. Loads and Parses data from json files
+    /// </summary>
     public class GameManager : MonoBehaviour
     {
-
-        [SerializeField]
-        private DotsLinkController dotsLinkController;
-
-
         private int rowCount;
         private int[] totalLevel = { 15 };
         private int difficulty = 0;
-        private int nLink = 0; //check in game.When nlink = 0.All the lines linked,so win.
-        private int levelPassed = 0;//how much level you passed
-
         private List<int> levelPass;
-        private int currentLevel = 0;//currect level
-        private int bestScore = 0;//bestscore for level
-
-        private int isSoundOn = 0;//whether game music is on
-        private int isSfxOn = 0;//whether the game sound effect is on
-
+        private int currentLevel = 0;
+        private int bestScore = 0;
         private List<List<int>> levelStates = new List<List<int>>();
-
-        private bool isWin = false;//check if win
-        private bool isfail = false;//whether the game failed
-
-        private bool isHolding = false;
-        private int pickColor = -1;
-
-        private int startId = -1;
-        private int lasttx = -1;
-        private int lastty = -1;
         private List<List<int>> paths;
-
         private JSONNode dotPoses;
         private int[] ColorData;
         private int[] DotColorData;
@@ -47,31 +27,37 @@ namespace nukebox
         private JSONNode levelData;
         private int[] linkedLines;
         private int winLinkCount;
-
-        public static GameManager instance;
-
-        private void Awake()
-        {
-            instance = this;
-        }
+        private TextAsset datas;
+        private Dictionary<string, Dictionary<string, string>> data;
 
 
-        public void PrepareGameManager()
-        {
-            ParseData(currentLevel);
-            initGameManager();
-            InitMainScript();
-        }
-
-        #region GameManager
-
+        #region Private Methods
 
         /// <summary>
-        /// Init this controller instance.only once.
+        /// Triggering OpenLevelScreen event at Start
         /// </summary>
-        public void initGameManager()
+        private void Start()
         {
- 
+            EventManager.TriggerEvent(EventID.Event_OpenLevelScreen);
+        }
+
+        /// <summary>
+        /// Inits GameManager on start of every level
+        /// </summary>
+        private void PrepareGameManager()
+        {
+            ResetData();
+            ParseData();
+            initScoreAnLevels();
+            EventManager.TriggerEvent(EventID.Event_GameStart);
+        }
+
+        /// <summary>
+        /// Init sore and levels
+        /// </summary>
+        private void initScoreAnLevels()
+        {
+
             int allScore = 0;
 
 
@@ -96,8 +82,6 @@ namespace nukebox
 
             bestScore = allScore;
 
-            Debug.Log("bestScore is:" + allScore);
-
             levelPass = new List<int>();
             for (int i = 0; i < totalLevel.Length; i++)
             {
@@ -110,14 +94,90 @@ namespace nukebox
 
         }
 
+        /// <summary>
+        /// Sets Level progress and triggers GameOver event
+        /// </summary>
+        /// 
+        private void OnGameWin()
+        {
+            levelStates[difficulty][currentLevel] = 1;
+            PlayerPrefs.SetInt("linkdot_" + difficulty + "_" + currentLevel, 1);
+        }
+
+        /// <summary>
+        /// Updates level number on game win
+        /// </summary>
+        private void updateLevel()
+        {
+            if (Config.currentLevel < Config.totalLevel[Config.difficulty] - 1)
+            {
+                currentLevel++;
+                Config.currentLevel = currentLevel;
+
+                if (currentLevel >= levelPass[difficulty])
+                {
+                    PlayerPrefs.SetInt("levelPassed" + difficulty, currentLevel);
+                    levelPass[difficulty] = currentLevel + 1;
+                }
+            }
+            else
+            {
+                currentLevel = 0;
+                Config.currentLevel = currentLevel;
+                PlayerPrefs.SetInt("levelPassed" + difficulty, currentLevel);
+            }
+
+            Debug.Log("GameManager, SetLevel, current Level = " + currentLevel);
+        }
+
+        /// <summary>
+        /// Updates score on Game Over
+        /// </summary>
+        private void UpdateScore()
+        {
+            int totalScore = 0;
+            for (int i = 0; i < totalLevel.Length; i++)
+            {
+                for (int j = 0; j < totalLevel[i]; j++)
+                {
+                    if (levelStates[i][j] == 1)
+                    {
+                        totalScore++;
+                    }
+                }
+            }
+
+            bestScore = totalScore;
+        }
+
         #endregion
 
         #region GameData
 
-
-        public void ParseData(int currentLevel)
+        /// <summary>
+        /// loading File from Resources folder and storing them in dictionary
+        /// </summary>
+        /// <param name="dataName"></param>
+        /// <returns></returns>
+        public string[] getData(string dataName)
         {
-            string tData = Datas.CreateInstance<Datas>().getData("linkdots")[currentLevel];//level
+            datas = Resources.Load<TextAsset>(dataName + "/" + difficulty);
+            string[] lines = new string[0];
+            data = new Dictionary<string, Dictionary<string, string>>();
+            Dictionary<string, string> loc = new Dictionary<string, string>();
+            lines = datas.text.Split('\n');
+
+            return lines;
+        }
+
+
+        /// <summary>
+        /// Parsing data based on current level. Setting data to Config variables
+        /// </summary>
+        public void ParseData()
+        {
+            currentLevel = PlayerPrefs.GetInt("levelPassed" + difficulty, 0);
+            string tData = getData("linkdots")[currentLevel];//level
             levelData = JSONArray.Parse(tData);
 
             rowCount = int.Parse(levelData["r"]);
@@ -150,20 +210,22 @@ namespace nukebox
             }
             winLinkCount = dotPoses.Count;
             linkedLines = new int[paths.Count + 1];
+
+            Config.SetData(rowCount, currentLevel, bestScore, levelStates, paths, dotPoses, ColorData, DotColorData, colors, linkedLines, winLinkCount);
+
+            Debug.Log("GameManager, ParseData, current Level = " + currentLevel);
         }
 
 
         /// <summary>
-        /// Always uses for initial or reset to start a new level.
+        /// Resets data on game start
         /// </summary>
         public void ResetData()
         {
-            isWin = false;
-            isfail = false;
+            Config.ResetConfig();
 
             levelStates.Clear();
 
-            //load levelState，check which level passed
             for (int i = 0; i < totalLevel.Length; i++)
             {
                 List<int> tStates = new List<int>();
@@ -180,112 +242,36 @@ namespace nukebox
 
         #endregion
 
-        #region MainScript
-
-
-
-        private void InitMainScript()
-        {
-            dotsLinkController.PrePareDots();
-        }
-
-        //handler event
-        public void OnRetryClick()
-        {
-            dotsLinkController.PrePareDots();
-        }
-
-        
+        #region Events
 
         /// <summary>
-        /// when game wins.
+        /// Subsribing methods to events
         /// </summary>
-        /// 
-        public void OnGameWin()
+        private void OnEnable()
         {
-            levelStates[difficulty][currentLevel] = 1;
-            PlayerPrefs.SetInt("linkdot_" + difficulty + "_" + currentLevel, 1);
+            EventManager.AddListener(EventID.Event_ParseData, EventOnParseData);
+            EventManager.AddListener(EventID.Event_GameOver, EventOnGameOver);
+        }
 
+        /// <summary>
+        /// Un-subsribing methods from events
+        /// </summary>
+        private void OnDisable()
+        {
+            EventManager.RemoveListener(EventID.Event_ParseData, EventOnParseData);
+            EventManager.RemoveListener(EventID.Event_GameOver, EventOnGameOver);
+        }
 
-            if (currentLevel >= levelPass[difficulty])
-            {
-                PlayerPrefs.SetInt("levelPassed" + difficulty, instance.currentLevel + 1);
-                levelPass[difficulty] = currentLevel + 1;
-            }
+        private void EventOnParseData(object obj)
+        {
+            PrepareGameManager();
+        }
 
+        private void EventOnGameOver(object obj)
+        {
+            OnGameWin();
             UpdateScore();
 
-            //PrepareVictoryScreen();
-        }
-
-        public void SetLevel(int level)
-        {
-            currentLevel = level;
-            Config.currentLevel = level;
-        }
-
-        private void UpdateScore()
-        {
-            int totalScore = 0;
-            for (int i = 0; i < totalLevel.Length; i++)
-            {
-                for (int j = 0; j < totalLevel[i]; j++)
-                {
-                    if (levelStates[i][j] == 1)
-                    {
-                        totalScore++;
-                    }
-                }
-            }
-
-            bestScore = totalScore;
-        }
-
-        public bool GetIsWin()
-        {
-            return isWin;
-        }
-
-        public bool GetIsHolding()
-        {
-            return isHolding;
-        }
-
-        public int GetPickColor()
-        {
-            return pickColor;
-        }
-
-        public void SetPickColor(int id)
-        {
-            pickColor = id;
-        }
-
-        public int GetCurrentLevel()
-        {
-            return currentLevel;
-        }
-
-        public DotsLinkController GetDotLinkController()
-        {
-            return dotsLinkController;
-        }
-        #endregion
-
-        #region Datas
-
-        private TextAsset datas;
-        private Dictionary<string, Dictionary<string, string>> data;
-
-        public string[] getData(string dataName)
-        {
-            datas = Resources.Load<TextAsset>(dataName + "/" + difficulty);
-            string[] lines = new string[0];
-            data = new Dictionary<string, Dictionary<string, string>>();
-            Dictionary<string, string> loc = new Dictionary<string, string>();
-            lines = datas.text.Split('\n');
-
-            return lines;
         }
 
         #endregion
