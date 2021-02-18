@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
-using Hitcode_linkDots;
+
 
 namespace nukebox
 {
@@ -172,22 +171,10 @@ namespace nukebox
                 dot.GetSpriteRenderer().color = Config.colors[i + 1];
                 dot.name = "dot";
 
-                // AnimateDots(dot, colorIndex);
 
                 Config.DotColorData[tindex] = i + 1;
             }
         }
-
-        private void AnimateDots(DotsController dot, int colorIndex)
-        {
-            dot.transform.localScale *= .9f;
-            Vector3 tcScale = dot.transform.localScale;
-            dot.transform.localScale = Vector3.zero;
-            float tdelay = colorIndex * .1f;
-
-            dot.transform.DOScale(tcScale, 1).SetDelay(tdelay).SetEase(Ease.OutBounce);
-        }
-
         #endregion
 
 

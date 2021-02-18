@@ -188,10 +188,6 @@ namespace nukebox
                 Debug.LogError("GameManager, ParseData, levelData is null");
                 return;
             }
-            else
-            {
-                Debug.Log("GameManager, ParseData" + levelData.ToString());
-            }
 
             string rowString = levelData["r"];
             rowCount = Convert.ToInt32(rowString);
