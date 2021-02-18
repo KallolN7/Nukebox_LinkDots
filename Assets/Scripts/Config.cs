@@ -12,9 +12,8 @@ namespace nukebox
         #region Temporary Variables
 
         public static int[] totalLevel = { 15 };
-        public const int difficulty = 0;
-        public const int linksPerDot = 4;
-
+        public static int difficulty = 0;
+        public static int linksPerDot = 4;
         public static int rowCount;
         public static int nLink = 0;
         public static int levelPassed = 0;
@@ -59,7 +58,7 @@ namespace nukebox
         /// <param name="winLinkCount1"></param>
         public static void SetData(int rowCount1, int currentLevel1, int bestScore1, List<List<int>> levelStates1, 
                                                    List<List<int>> paths1, JSONNode dotPoses1,
-                                                   int[] ColorData1, int[] DotColorData1, Color[] colors1,  int[] linkedLines1, int winLinkCount1)
+                                                   int[] ColorData1, int[] DotColorData1, Color[] colors1,  int[] linkedLines1, int winLinkCount1, int[] totalLevel1, int difficulty1, int linksPerDot1)
 
         {
             rowCount = rowCount1;
@@ -73,6 +72,9 @@ namespace nukebox
             colors = colors1;
             linkedLines = linkedLines1;
             winLinkCount = winLinkCount1;
+            totalLevel = totalLevel1;
+            difficulty = difficulty1;
+            linksPerDot = linksPerDot1;
         }
 
 

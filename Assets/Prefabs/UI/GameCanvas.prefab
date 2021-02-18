@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2069929062419979809}
   - component: {fileID: 2069929062419979810}
   - component: {fileID: 2069929062419979811}
-  - component: {fileID: 2069929062419979868}
   m_Layer: 5
   m_Name: GameCanvas
   m_TagString: Untagged
@@ -100,18 +99,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &2069929062419979868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2069929062419979870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67f07cf13d4bf044d8dbdedfc953403a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &7448419645640702469
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -119,6 +106,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2069929062419979869}
     m_Modifications:
+    - target: {fileID: 1546654190316699439, guid: 18588157ba94e454fa454032f6bdae1a, type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 1546654190316699439, guid: 18588157ba94e454fa454032f6bdae1a, type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1546654190316699439, guid: 18588157ba94e454fa454032f6bdae1a, type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1546654190316699439, guid: 18588157ba94e454fa454032f6bdae1a, type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1546654190316699439, guid: 18588157ba94e454fa454032f6bdae1a, type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8928324377892222030, guid: 18588157ba94e454fa454032f6bdae1a, type: 3}
       propertyPath: m_Name
       value: GameUI

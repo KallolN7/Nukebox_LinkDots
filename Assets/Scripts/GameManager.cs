@@ -11,8 +11,11 @@ namespace nukebox
     /// </summary>
     public class GameManager : MonoBehaviour
     {
+        [SerializeField]
+        private GameData gameData;
+
         private int rowCount;
-        private int[] totalLevel = { 15 };
+        private int[] totalLevel;
         private int difficulty = 0;
         private List<int> levelPass;
         private int currentLevel = 0;
@@ -223,7 +226,7 @@ namespace nukebox
             winLinkCount = dotPoses.Count;
             linkedLines = new int[paths.Count + 1];
 
-            Config.SetData(rowCount, currentLevel, bestScore, levelStates, paths, dotPoses, ColorData, DotColorData, colors, linkedLines, winLinkCount);
+            Config.SetData(rowCount, currentLevel, bestScore, levelStates, paths, dotPoses, ColorData, DotColorData, colors, linkedLines, winLinkCount, totalLevel, difficulty, gameData.GetLinksPerDot());
 
             Debug.Log("GameManager, ParseData, current Level = " + currentLevel + " | rowCount= " + rowCount);
         }
@@ -235,8 +238,9 @@ namespace nukebox
         public void ResetData()
         {
             Config.ResetConfig();
-
             levelStates.Clear();
+            totalLevel = gameData.GetTotalLevels();
+            difficulty = gameData.GetDifficulty();
 
             for (int i = 0; i < totalLevel.Length; i++)
             {
